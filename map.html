@@ -1,0 +1,190 @@
+<!doctype html>
+
+<head>  
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Map</title><meta name="keywords" content="map" />
+<meta name="description" content="TipStop" />
+<meta name="applicable-device"content="pc,mobile">
+
+<!--CSS/JS-->
+<link href="css/style.css" rel="stylesheet">
+<link href="css/fontface.css" rel="stylesheet">
+<script src="js/map.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+<link rel="stylesheet"
+    href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous"> <!--bootstrap css-->
+</head>
+
+
+<body>
+
+<!--User Profile Drawer Overlay Start-->
+<div class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
+    <header class="bmd-layout-header">
+        <div class="navbar navbar-light bg-faded">
+
+            <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
+                <span class="sr-only">Toggle drawer</span>
+                <i class="material-icons">menu</i>
+            </button>
+            <div class="logonav"><img src="img/logo.png"></div><!--centered logo icon-->
+            <a href="#">
+            <img src="img/small-logo.png" class="contactus" alt="contactus"/> <!--rightside icon-->
+            </a>
+        </div>
+        
+    </header>
+    <div id="dw-s2" class="bmd-layout-drawer bg-faded">
+        <header>
+            <div><img src="img/userimg.png" id="userimg">
+                <div id="dr-title">Username</div>
+                <div id="logout"><small>LogOut</small></div>
+            </div>
+        </header>
+        <ul class="list-group">
+            <a class="list-group-item"><img src="img/userimg.png"> My Scores</a>
+            <a class="list-group-item"><img src="img/userimg.png"> My Requests</a>
+            <a class="list-group-item"><img src="img/userimg.png"> My Responds</a>
+            <a class="list-group-item"><img src="img/userimg.png"> Setting</a>
+        </ul>
+    </div>
+    <main class="bmd-layout-content">
+        <div class="main">
+            <div id="map">
+            </div>
+            <div class="container">
+                <a href="#" id="requestbutton" class="request herocontent-h" data-toggle="modal" data-target="#myModal">Request</a>
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Put your request bellow</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Select request</p>
+                                <select class="drop-entry">
+                                    <option value="restaurant">Restaurant</option>
+                                    <option value="poi">Point of Interest</option>
+                                    <option value="entertainment">Entertainment</option>
+                                    <option value="accomodation">Accomodation</option>
+                                </select>
+                                <br><br>
+                                <p>Time limit</p>
+                                <select class="drop-entry">
+                                    <option value="5min">5 Minutes</option>
+                                    <option value="10min">10 Minutes</option>
+                                    <option value="30min">30 Minutes</option>
+                                    <option value="1hr">1 Hour</option>
+                                </select>
+                                <br><br>
+                                <p>Your specific request</p>
+                                <input type="text" name="request" class="text-entry">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="button-request" data-dismiss="modal">Request</button>
+                                <button type="button" class="button-close btn-close" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<!--User Profile Drawer Overlay End-->
+
+
+
+
+
+
+
+<!--Map Function Start-->
+<div id="mapbox">
+  <script>
+    function initMap() {
+        var uluru = {
+            lat: -25.363,
+            lng: 131.044
+        };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: uluru
+        });
+        var infoWindow = new google.maps.InfoWindow({
+            map: map
+        });
+        if (navigator.geolocation) {
+
+            var getLocation = function () {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent('My location');
+                    map.setCenter(pos);
+
+                    var circle = new google.maps.Circle({
+                        strokeColor: '#12a45a',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 0,
+                        fillColor: '#ff0000',
+                        fillOpacity: 1,
+                        map: map,
+                        center: pos,
+                        radius: 20,
+                    });
+
+
+                }, function () {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            }
+            getLocation();
+            // setInterval(getLocation,5000);
+        } else {
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
+    }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+            'Error: The Geolocation service failed.' :
+            'Error: Your browser doesn\'t support geolocation.');
+    }
+  </script>
+</div>
+<!--Map Function End-->
+
+<!--js-->
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARmOZydOM2M72QluoI7IpbDX-3eGeZzGw&callback=initMap"
+        type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js"
+        integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js"
+        integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9"
+        crossorigin="anonymous"></script>
+<script>$(document).ready(function () {
+    $('body').bootstrapMaterialDesign();
+});</script>
+
+
+
+</body>
+</html>
